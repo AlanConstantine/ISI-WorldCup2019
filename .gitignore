@@ -2,4 +2,4 @@
 *.log
 .ipynb_checkpoints/
 /__pycache__/
-/data/
+*.zip
