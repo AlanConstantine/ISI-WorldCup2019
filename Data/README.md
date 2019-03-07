@@ -1,7 +1,7 @@
 ### 文件名中英对照表
 ###
 |Id|Chinese|English|
-| ------------- |:-------------:| -----:|
+|-------------|-------------|-----|
 |1|产品|1_Product|
 |2|工商基本信息表|2_BasicInformationofBusinessandIndustry|
 |3|购地-地块公示|3_Landpurchase-landplotpublicity|
