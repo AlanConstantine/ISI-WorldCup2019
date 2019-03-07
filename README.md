@@ -9,9 +9,11 @@
 ├── Data # 数据
 │   ├── mission1_predict.xlsx
 │   ├── mission1_real.xlsx
+│   ├── CompanyInfo # 所有数据
 │   └── Original # 原始数据备份 
 │       ├── ISI.zip
-│       └── ╚№╠т1╩¤╛▌╝п.zip
+│       ├── CompanyInfo.zip
+│       └── 中文名数据.zip
 ├── Description # 赛事描述
 │   └── Mission 1.Company Investment Value Evaluation.pdf
 ├── Evaluation # 结果评估
