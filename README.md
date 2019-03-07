@@ -1,20 +1,21 @@
-## IEEE ISI-World Cup 2019 -- Mission 1.Company Investment Value Evaluation
+## IEEE ISI-World Cup 2019 
+**Mission 1.Company Investment Value Evaluation**
 
-#### Fille Structure
+### Fille Structure
 
 ```
 .
-├── Code
-├── Data
+├── Code # 代码
+├── Data # 数据
 │   ├── mission1_predict.xlsx
 │   ├── mission1_real.xlsx
-│   └── Original
+│   └── Original # 原始数据备份 
 │       ├── ISI.zip
 │       └── ╚№╠т1╩¤╛▌╝п.zip
-├── Description
-│   ├── Mission 1.Company Investment Value Evaluation.pdf
+├── Description # 赛事描述
+│   └── Mission 1.Company Investment Value Evaluation.pdf
+├── Evaluation # 结果评估
+│   ├── mission1_test.jar
 │   └── TestResultDescription.pdf
-├── Evaluation
-│   └── mission1_test.jar
 └── README.md
 ```
