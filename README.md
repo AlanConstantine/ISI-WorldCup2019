@@ -9,6 +9,8 @@
 ├── Data # 数据
 │   ├── mission1_predict.xlsx
 │   ├── mission1_real.xlsx
+│   ├── README.md # 文件中英文对照
+│   ├── renamefile.ipynb # 重命名数据集
 │   ├── CompanyInfo # 所有数据
 │   └── Original # 原始数据备份 
 │       ├── ISI.zip
