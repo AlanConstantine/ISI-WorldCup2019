@@ -1,0 +1,1800 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-28T11:20:27.969010Z",
+     "start_time": "2019-03-28T11:20:27.949562Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Timestamp('2019-03-28 00:00:00')"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from IPython.display import display\n",
+    "import matplotlib.pyplot as plt\n",
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import seaborn as sns\n",
+    "import matplotlib as mpl\n",
+    "import warnings\n",
+    "import time\n",
+    "from collections import Counter\n",
+    "warnings.filterwarnings(\"ignore\")\n",
+    "\n",
+    "\n",
+    "plt.style.use(\"fivethirtyeight\")\n",
+    "\n",
+    "sns.set_style({'font.sans-serif': ['simsun', 'Arial']})\n",
+    "sns.set_style('darkgrid', {'font.sans-serif': ['simhei', 'Arial']})\n",
+    "%matplotlib inline\n",
+    "current_date = pd.to_datetime(\n",
+    "    time.strftime('%Y-%m-%d', time.localtime(time.time())))\n",
+    "res={}\n",
+    "current_date"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 软著著作权"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:02.413986Z",
+     "start_time": "2019-03-22T17:24:57.920333Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_soft_bpk = pd.read_excel(r'../../Data/CompInfo/软著著作权.xlsx')\n",
+    "df_soft = df_soft_bpk.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:02.434041Z",
+     "start_time": "2019-03-22T17:25:02.416110Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 36858 entries, 0 to 36857\n",
+      "Data columns (total 4 columns):\n",
+      "企业编号           36858 non-null int64\n",
+      "软件全称           36858 non-null object\n",
+      "软件著作权版本号       30878 non-null object\n",
+      "软件著作权登记批准日期    36818 non-null object\n",
+      "dtypes: int64(1), object(3)\n",
+      "memory usage: 1.1+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_soft.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:02.777935Z",
+     "start_time": "2019-03-22T17:25:02.437774Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "new_df_soft = pd.DataFrame(df_soft['企业编号'].value_counts())\n",
+    "new_df_soft.columns = ['软著数量']\n",
+    "new_df_soft['企业编号'] = new_df_soft.index\n",
+    "new_df_soft.sort_values(by=['企业编号'], inplace=True)\n",
+    "new_df_soft = new_df_soft[['企业编号', '软著数量']]\n",
+    "new_df_soft = new_df_soft.set_index(np.arange(0, len(new_df_soft)))\n",
+    "# new_df_soft['软著数量'].describe()\n",
+    "# new_df_soft.info()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 作品著作"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:05.748343Z",
+     "start_time": "2019-03-22T17:25:02.782461Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_zuopin_bpk = pd.read_excel(r'../../Data/CompInfo/作品著作权.xlsx')\n",
+    "df_zuopin = df_zuopin_bpk.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 56,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:05.778398Z",
+     "start_time": "2019-03-22T17:25:05.751984Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 33555 entries, 0 to 33554\n",
+      "Data columns (total 5 columns):\n",
+      "企业编号           33555 non-null int64\n",
+      "作品著作权类别        33379 non-null object\n",
+      "作品著作权登记日期      33178 non-null object\n",
+      "作品著作权创作完成日期    32177 non-null object\n",
+      "作品著作权首次发布日期    22118 non-null object\n",
+      "dtypes: int64(1), object(4)\n",
+      "memory usage: 1.3+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_zuopin.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:06.102189Z",
+     "start_time": "2019-03-22T17:25:05.781072Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_zuopin = df_zuopin_bpk.copy()\n",
+    "# df_zuopin['作品著作权类别'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:06.152724Z",
+     "start_time": "2019-03-22T17:25:06.105531Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# df_zuopin['作品著作权类别'] = df_zuopin['作品著作权类别'].str.replace(\n",
+    "#     r'[A-Z]{1}\\s', '', regex=True)\n",
+    "# df_zuopin['作品著作权类别'] = df_zuopin['作品著作权类别'].str.replace(\n",
+    "#     r'作品', '', regex=True)\n",
+    "# df_zuopin['作品著作权类别'] = df_zuopin['作品著作权类别'].str.replace(\n",
+    "#     r'类似摄制电影方法创作','电影和类似摄制电影方法创作', regex=True)\n",
+    "# df_zuopin['作品著作权类别'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:06.213586Z",
+     "start_time": "2019-03-22T17:25:06.157637Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "new_df_zuopin = pd.DataFrame(df_zuopin['企业编号'].value_counts())\n",
+    "new_df_zuopin.columns = ['作品著作数量']\n",
+    "new_df_zuopin['企业编号'] = new_df_zuopin.index\n",
+    "new_df_zuopin.sort_values(by=['企业编号'], inplace=True)\n",
+    "new_df_zuopin = new_df_zuopin[['企业编号', '作品著作数量']]\n",
+    "new_df_zuopin = new_df_zuopin.set_index(np.arange(0, len(new_df_zuopin)))\n",
+    "# new_df_zuopin.head(n=20)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 60,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:06.281099Z",
+     "start_time": "2019-03-22T17:25:06.215503Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "merge_zhuzuo_zuopin = (pd.merge(new_df_soft, new_df_zuopin,\n",
+    "                                on='企业编号', how='outer')).fillna(0).astype(int)\n",
+    "# merge_zhuzuo_zuopin.head(n=10)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:06.353495Z",
+     "start_time": "2019-03-22T17:25:06.283959Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# merge.to_excel(r'./PreprocessedData/软件与作品著作权.xlsx', index=False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 项目信息"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 62,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:06.821819Z",
+     "start_time": "2019-03-22T17:25:06.356290Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_project_bkp = pd.read_excel(r'../../Data/CompInfo/项目信息.xlsx')\n",
+    "df_project = df_project_bkp.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:06.833553Z",
+     "start_time": "2019-03-22T17:25:06.824121Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 3054 entries, 0 to 3053\n",
+      "Data columns (total 7 columns):\n",
+      "企业编号      3054 non-null int64\n",
+      "行业        170 non-null object\n",
+      "标签        3047 non-null object\n",
+      "企业规模      168 non-null object\n",
+      "运营状态      2934 non-null object\n",
+      "简介        3026 non-null object\n",
+      "项目成立时间    2876 non-null object\n",
+      "dtypes: int64(1), object(6)\n",
+      "memory usage: 167.1+ KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_project.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:06.957979Z",
+     "start_time": "2019-03-22T17:25:06.838231Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "运营中    2932\n",
+       "融资中       2\n",
+       "Name: 运营状态, dtype: int64"
+      ]
+     },
+     "execution_count": 64,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_project['运营状态'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 65,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:07.022829Z",
+     "start_time": "2019-03-22T17:25:06.960037Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "new_df_project = pd.DataFrame(\n",
+    "    df_project.loc[(df_project['运营状态'] == '运营中'), '企业编号'].value_counts())\n",
+    "new_df_project.columns = ['项目数量']\n",
+    "new_df_project['企业编号'] = new_df_project.index\n",
+    "new_df_project.sort_values(by=['企业编号'], inplace=True)\n",
+    "new_df_project = new_df_project[['企业编号', '项目数量']]\n",
+    "new_df_project = new_df_project.set_index(np.arange(0, len(new_df_project)))\n",
+    "# new_df_project.head(n=20)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:07.095739Z",
+     "start_time": "2019-03-22T17:25:07.024806Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "merge_zhuzuo_zuopin_project = (pd.merge(merge_zhuzuo_zuopin, new_df_project,\n",
+    "                                        on='企业编号', how='outer')).fillna(0).astype(int)\n",
+    "# merge_zhuzuo_zuopin_project.head(n=20)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 纳税A级年份"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:07.553911Z",
+     "start_time": "2019-03-22T17:25:07.097917Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_nashuiyear_bkp = pd.read_excel(r'../../Data/CompInfo/纳税A级年份.xlsx')\n",
+    "df_nashuiyear = df_nashuiyear_bkp.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 68,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:07.573829Z",
+     "start_time": "2019-03-22T17:25:07.562874Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 7927 entries, 0 to 7926\n",
+      "Data columns (total 2 columns):\n",
+      "企业编号      7927 non-null int64\n",
+      "纳税A级年份    7927 non-null int64\n",
+      "dtypes: int64(2)\n",
+      "memory usage: 123.9 KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_nashuiyear.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 69,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:07.673697Z",
+     "start_time": "2019-03-22T17:25:07.581238Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2016    2380\n",
+       "2017    1978\n",
+       "2015    1858\n",
+       "2014    1711\n",
+       "Name: 纳税A级年份, dtype: int64"
+      ]
+     },
+     "execution_count": 69,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_nashuiyear['纳税A级年份'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:07.749118Z",
+     "start_time": "2019-03-22T17:25:07.676606Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "new_df_nashuiyear = df_nashuiyear.groupby(['企业编号', '纳税A级年份'])[\n",
+    "    '纳税A级年份'].count().unstack()\n",
+    "\n",
+    "new_df_nashuiyear['企业编号'] = new_df_nashuiyear.index\n",
+    "new_df_nashuiyear = new_df_nashuiyear[['企业编号', 2014, 2015, 2016, 2017]]\n",
+    "columns = {'企业编号': '企业编号', 2014: '纳税A级年份_2014', 2015: '纳税A级年份_2015',\n",
+    "           2016: '纳税A级年份_2016', 2017: '纳税A级年份_2017'}\n",
+    "columns = ['企业编号', '纳税A级年份_2014', '纳税A级年份_2015', '纳税A级年份_2016', '纳税A级年份_2017']\n",
+    "# new_df_nashuiyear.rename(columns, inplace=True)\n",
+    "new_df_nashuiyear.columns = columns\n",
+    "new_df_nashuiyear = new_df_nashuiyear.set_index(\n",
+    "    np.arange(0, len(new_df_nashuiyear))).fillna(0).astype(int)\n",
+    "# new_df_nashuiyear.head(n=5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 71,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:07.813700Z",
+     "start_time": "2019-03-22T17:25:07.752023Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "merge_zhuzuo_zuopin_project_nashui = (pd.merge(merge_zhuzuo_zuopin_project, new_df_nashuiyear,\n",
+    "                                               on='企业编号', how='outer')).fillna(0).astype(int)\n",
+    "# merge_zhuzuo_zuopin_project_nashui.head(n=20)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 融资情况"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:07.893769Z",
+     "start_time": "2019-03-22T17:25:07.817119Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# df_rongzi_bkp = pd.read_excel(r'../../Data/CompInfo/融资信息.xlsx')\n",
+    "# df_rongzi = df_rongzi_bkp.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 73,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:07.964470Z",
+     "start_time": "2019-03-22T17:25:07.897327Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# df_rongzi.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:08.042477Z",
+     "start_time": "2019-03-22T17:25:07.971715Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# df_rongzi['轮次'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 资质认证"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 75,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:22.935059Z",
+     "start_time": "2019-03-22T17:25:08.046342Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_zizhi_bkp = pd.read_excel(r'../../Data/CompInfo/资质认证.xlsx')\n",
+    "df_zizhi = df_zizhi_bkp.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 76,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:22.998972Z",
+     "start_time": "2019-03-22T17:25:22.937451Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 169898 entries, 0 to 169897\n",
+      "Data columns (total 5 columns):\n",
+      "企业编号       169898 non-null int64\n",
+      "证书名称       169898 non-null object\n",
+      "有效期起止日期    161662 non-null object\n",
+      "有效期截至日期    124035 non-null object\n",
+      "状态         148665 non-null object\n",
+      "dtypes: int64(1), object(4)\n",
+      "memory usage: 6.5+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_zizhi.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 77,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:23.348310Z",
+     "start_time": "2019-03-22T17:25:23.001808Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "有效           70917\n",
+       "已注销          28220\n",
+       "注销           15805\n",
+       "已撤销          12601\n",
+       "过期失效          9762\n",
+       "撤销            9719\n",
+       "暂停             580\n",
+       "已暂停            494\n",
+       "当前批件           238\n",
+       "已过期            212\n",
+       "延续              41\n",
+       "变更              23\n",
+       "正常              16\n",
+       "历史批件            14\n",
+       "旧版               7\n",
+       "注销(非申请)          5\n",
+       "新立               5\n",
+       "无效（依申请注销）        3\n",
+       "无效（逾期未换证）        2\n",
+       "证书注销             1\n",
+       "Name: 状态, dtype: int64"
+      ]
+     },
+     "execution_count": 77,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_zizhi = df_zizhi_bkp.copy()\n",
+    "df_zizhi['状态'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 78,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:24.039054Z",
+     "start_time": "2019-03-22T17:25:23.350975Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "status = ['有效', '延续', '变更', '正常', '新立']\n",
+    "new_df_zizhi = df_zizhi.loc[(df_zizhi['有效期截至日期'].notnull())]\n",
+    "new_df_zizhi = new_df_zizhi.loc[(new_df_zizhi['状态'].notnull())]\n",
+    "new_df_zizhi['有效期截至日期'] = pd.to_datetime(new_df_zizhi['有效期截至日期'])\n",
+    "\n",
+    "nowtime = pd.to_datetime(time.strftime(\n",
+    "    '%Y-%m-%d', time.localtime(time.time())))\n",
+    "# new_df_zizhi = new_df_zizhi.loc[(new_df_zizhi['有效期截至日期'].notnull())]\n",
+    "# df_zizhi = df_zizhi.loc[(df_zizhi['状态 '] == '有效')]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 79,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:24.061020Z",
+     "start_time": "2019-03-22T17:25:24.041373Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "有效      59223\n",
+       "已注销      3252\n",
+       "注销       2196\n",
+       "已撤销      1425\n",
+       "撤销       1144\n",
+       "已暂停       481\n",
+       "暂停        433\n",
+       "过期失效       47\n",
+       "延续         22\n",
+       "变更         18\n",
+       "正常         16\n",
+       "旧版          7\n",
+       "新立          4\n",
+       "证书注销        1\n",
+       "Name: 状态, dtype: int64"
+      ]
+     },
+     "execution_count": 79,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "new_df_zizhi = new_df_zizhi.loc[(new_df_zizhi['有效期截至日期'] > nowtime)]\n",
+    "new_df_zizhi['状态'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 80,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:24.196575Z",
+     "start_time": "2019-03-22T17:25:24.064511Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "new_df_zizhi = new_df_zizhi.loc[(\n",
+    "    new_df_zizhi['状态'].str.contains('[有效|延续|变更|正常|新立]'))]\n",
+    "# new_df_zizhi['证书名称'].value_counts()\n",
+    "# new_df_zizhi = new_df_zizhi.groupby(\n",
+    "#     ['企业编号', '证书名称'])['证书名称'].count().unstack()\n",
+    "# new_df_zizhi.head(n=10)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 81,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:24.256535Z",
+     "start_time": "2019-03-22T17:25:24.198654Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "new_df_zizhi = pd.DataFrame(new_df_zizhi['企业编号'].value_counts())\n",
+    "new_df_zizhi.columns = ['资质证书数量']\n",
+    "new_df_zizhi['企业编号'] = new_df_zizhi.index\n",
+    "new_df_zizhi.sort_values(by=['企业编号'], inplace=True)\n",
+    "new_df_zizhi = new_df_zizhi[['企业编号', '资质证书数量']]\n",
+    "new_df_zizhi = new_df_zizhi.set_index(np.arange(0, len(new_df_zizhi)))\n",
+    "# new_df_zizhi.head(n=20)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 82,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:24.335536Z",
+     "start_time": "2019-03-22T17:25:24.258732Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "merge_zhuzuo_zuopin_project_nashui_zizhi = (pd.merge(merge_zhuzuo_zuopin_project_nashui, new_df_zizhi,\n",
+    "                                                     on='企业编号', how='outer')).fillna(0).astype(int)\n",
+    "# merge_zhuzuo_zuopin_project_nashui_zizhi.head(n=20)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 产品"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 83,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:25.050031Z",
+     "start_time": "2019-03-22T17:25:24.337493Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_product = pd.read_excel(r'../../Data/CompInfo/产品.xlsx')\n",
+    "new_df_product = df_product.groupby(\n",
+    "    ['企业编号', '产品类型'])['产品类型'].count().unstack()\n",
+    "\n",
+    "new_df_product['企业编号'] = new_df_product.index\n",
+    "columns = ['企业编号', 'android', 'ios', 'miniapp', 'website', 'wechat', 'weibo']\n",
+    "new_df_product = pd.DataFrame(new_df_product, columns=columns)\n",
+    "new_df_product = new_df_product.set_index(np.arange(0, len(new_df_product)))\n",
+    "# new_df_product.head(n=10)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 84,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:25:25.065075Z",
+     "start_time": "2019-03-22T17:25:25.052398Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "merge_zhuzuo_zuopin_project_nashui_zizhi_product = (pd.merge(merge_zhuzuo_zuopin_project_nashui_zizhi, new_df_product,\n",
+    "                                                             on='企业编号', how='outer')).fillna(0).astype(int)\n",
+    "# merge_zhuzuo_zuopin_project_nashui_zizhi_product.head(n=20)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 专利"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 85,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:43.379770Z",
+     "start_time": "2019-03-22T17:25:25.066791Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_zhuanli = pd.read_excel(r'../../Data/CompInfo/专利.xlsx')\n",
+    "df_zhuanli['专利类型'] = df_zhuanli['专利类型'].str.replace('更正', '', regex=True)\n",
+    "\n",
+    "df_zhuanli['授权公告日'] = df_zhuanli['授权公告日'].str.replace(\n",
+    "    r'[^0-9\\-]', '', regex=True)\n",
+    "df_zhuanli['申请日'] = df_zhuanli['申请日'].str.replace(r'[^0-9\\-]', '', regex=True)\n",
+    "\n",
+    "df_zhuanli['授权公告日'] = pd.to_datetime(df_zhuanli['授权公告日'])\n",
+    "df_zhuanli['申请日'] = pd.to_datetime(df_zhuanli['申请日'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 86,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:43.883885Z",
+     "start_time": "2019-03-22T17:26:43.382141Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "tmp1 = df_zhuanli.loc[(df_zhuanli['专利类型'] == '发明专利')]\n",
+    "tmp1 = tmp1.loc[(abs(tmp1['申请日'].sub(pd.to_datetime(\n",
+    "    time.strftime('%Y-%m-%d', time.localtime(time.time()))), axis=0).dt.days)/365) <= 20]\n",
+    "\n",
+    "tmp2 = df_zhuanli.loc[(df_zhuanli['专利类型'] == '发明公布')]\n",
+    "tmp2 = tmp2.loc[(abs(tmp2['申请日'].sub(pd.to_datetime(\n",
+    "    time.strftime('%Y-%m-%d', time.localtime(time.time()))), axis=0).dt.days)/365) <= 20]\n",
+    "\n",
+    "tmp3 = df_zhuanli.loc[(df_zhuanli['专利类型'] == '发明授权')]\n",
+    "tmp3 = tmp3.loc[(abs(tmp3['申请日'].sub(pd.to_datetime(\n",
+    "    time.strftime('%Y-%m-%d', time.localtime(time.time()))), axis=0).dt.days)/365) <= 20]\n",
+    "\n",
+    "tmp4 = df_zhuanli.loc[(df_zhuanli['专利类型'] == '外观设计')]\n",
+    "tmp4 = tmp4.loc[(abs(tmp4['申请日'].sub(pd.to_datetime(\n",
+    "    time.strftime('%Y-%m-%d', time.localtime(time.time()))), axis=0).dt.days)/365) <= 10]\n",
+    "\n",
+    "tmp5 = df_zhuanli.loc[(df_zhuanli['专利类型'] == '实用新型')]\n",
+    "tmp5 = tmp5.loc[(abs(tmp5['申请日'].sub(pd.to_datetime(\n",
+    "    time.strftime('%Y-%m-%d', time.localtime(time.time()))), axis=0).dt.days)/365) <= 10]\n",
+    "\n",
+    "filter_df_zhuanli = pd.concat([tmp1, tmp2, tmp3, tmp4, tmp5])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 87,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:44.040468Z",
+     "start_time": "2019-03-22T17:26:43.886381Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "filter_df_zhuanli = filter_df_zhuanli.drop(columns=['授权公告日', '申请日'])\n",
+    "new_df_zhuanli = filter_df_zhuanli.groupby(\n",
+    "    ['企业编号', '专利类型'])['专利类型'].count().unstack()\n",
+    "new_df_zhuanli['企业编号'] = new_df_zhuanli.index\n",
+    "columns = ['企业编号', '发明专利', '发明公布', '发明授权', '外观设计', '实用新型']\n",
+    "new_df_zhuanli = pd.DataFrame(new_df_zhuanli, columns=columns)\n",
+    "new_df_zhuanli = new_df_zhuanli.set_index(np.arange(0, len(new_df_zhuanli)))\n",
+    "# new_df_zhuanli.head(n=5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 88,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:44.054746Z",
+     "start_time": "2019-03-22T17:26:44.042744Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "merge_zhuzuo_zuopin_project_nashui_zizhi_product_zhuanli = (pd.merge(merge_zhuzuo_zuopin_project_nashui_zizhi_product, new_df_zhuanli,\n",
+    "                                                                     on='企业编号', how='outer')).fillna(0).astype(int)\n",
+    "# merge_zhuzuo_zuopin_project_nashui_zizhi_product_zhuanli.head(n=20)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 竞品"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 89,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:47.800699Z",
+     "start_time": "2019-03-22T17:26:44.056654Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_jingpin_bkp = pd.read_excel(r'../../Data/CompInfo/竞品.xlsx')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 90,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:47.829081Z",
+     "start_time": "2019-03-22T17:26:47.802893Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 33883 entries, 0 to 33882\n",
+      "Data columns (total 7 columns):\n",
+      "企业编号      33883 non-null int64\n",
+      "竞品的行业     2076 non-null object\n",
+      "竞品的标签     33875 non-null object\n",
+      "竞品轮次      23416 non-null object\n",
+      "竞品详细地址    31384 non-null object\n",
+      "竞品运营状态    31002 non-null object\n",
+      "竞品成立时间    31561 non-null object\n",
+      "dtypes: int64(1), object(6)\n",
+      "memory usage: 1.8+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_jingpin = df_jingpin_bkp.copy()\n",
+    "df_jingpin.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 91,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:47.888965Z",
+     "start_time": "2019-03-22T17:26:47.831012Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_jingpin = df_jingpin.loc[(df_jingpin['竞品运营状态'] == '运营中')]\n",
+    "df_jingpin = df_jingpin.loc[(df_jingpin['竞品的标签'].notnull())]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 92,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:47.967510Z",
+     "start_time": "2019-03-22T17:26:47.891291Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# df_jingpin['竞品的标签']=df_jingpin['竞品的标签'].str.split('\\n')\n",
+    "# df_jingpin['竞品的标签']\n",
+    "# df_jingpin['第一个竞品标签'] = df_jingpin['竞品的标签'].astype(object).apply(lambda x: x[0])\n",
+    "# df_jingpin['第一个竞品标签'].value_counts()\n",
+    "# df_jingpin['竞品的标签']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 93,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:48.042725Z",
+     "start_time": "2019-03-22T17:26:47.969787Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "new_df_jingpin = pd.DataFrame(df_jingpin['企业编号'].value_counts())\n",
+    "new_df_jingpin.columns = ['竞品数量']\n",
+    "new_df_jingpin['企业编号'] = new_df_jingpin.index\n",
+    "new_df_jingpin.sort_values(by=['企业编号'], inplace=True)\n",
+    "new_df_jingpin = new_df_jingpin[['企业编号', '竞品数量']]\n",
+    "new_df_jingpin = new_df_jingpin.set_index(np.arange(0, len(new_df_jingpin)))\n",
+    "# new_df_jingpin.head(n=20)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 94,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:48.120169Z",
+     "start_time": "2019-03-22T17:26:48.046554Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "merge_zhuzuo_zuopin_project_nashui_zizhi_product_zhuanli_jingpin = (pd.merge(merge_zhuzuo_zuopin_project_nashui_zizhi_product_zhuanli, new_df_jingpin,\n",
+    "                                                                             on='企业编号', how='outer')).fillna(0).astype(int)\n",
+    "# merge_zhuzuo_zuopin_project_nashui_zizhi_product_zhuanli_jingpin.head(n=5)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 商标"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-28T10:04:21.146136Z",
+     "start_time": "2019-03-28T10:03:52.722280Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_shangbiao_bkp = pd.read_excel(r'../../Data/CompInfo/商标.xlsx')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-28T10:04:36.481580Z",
+     "start_time": "2019-03-28T10:04:36.341046Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 345417 entries, 0 to 345416\n",
+      "Data columns (total 6 columns):\n",
+      "企业编号         345417 non-null int64\n",
+      "商标状态         343755 non-null object\n",
+      "申请日期         343433 non-null object\n",
+      "专用权期限开始日期    0 non-null float64\n",
+      "专用权期限结束日期    226554 non-null object\n",
+      "商标使用期限时间段    340948 non-null object\n",
+      "dtypes: float64(1), int64(1), object(4)\n",
+      "memory usage: 15.8+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_shangbiao = df_shangbiao_bkp.copy()\n",
+    "df_shangbiao.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-28T11:21:30.976046Z",
+     "start_time": "2019-03-28T11:21:30.788011Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "商标已注册                        42916\n",
+       "注册                           22874\n",
+       "商标注册申请完成                     22085\n",
+       "商标续展完成                       19076\n",
+       "商标变更完成                       14791\n",
+       "核准证明打印发送                     14106\n",
+       "变更商标申请人/注册人名义/地址完成            8903\n",
+       "等待受理通知书发文                     8220\n",
+       "等待受理通知发文                      7862\n",
+       "商标注册申请注册公告排版完成                6928\n",
+       "出具商标注册证明完成                    4775\n",
+       "商标转让完成                        4652\n",
+       "商标转让中                         2886\n",
+       "申请收文                          2311\n",
+       "商标续展中                         1830\n",
+       "变更商标申请人/注册人名义/地址中             1723\n",
+       "等待打印受理通知书                     1647\n",
+       "开具注册证明完成                      1621\n",
+       "等待打印注册证                       1561\n",
+       "等待注册公告公示期                     1378\n",
+       "商标无效                          1269\n",
+       "驳回复审注册公告排版完成                  1256\n",
+       "等待注册发文                         965\n",
+       "等待实质审查                         921\n",
+       "等待实审裁文发文                       757\n",
+       "商标注册申请等待受理中                    732\n",
+       "商标注册申请等待驳回复审                   709\n",
+       "商标使用许可备案完成                     708\n",
+       "核准通知打印发送                       661\n",
+       "排版注册公告                         614\n",
+       "                             ...  \n",
+       "排版送达公告(商标使用许可备案通知书)              1\n",
+       "收到驳回复审申请或补充材料,待审                 1\n",
+       "领退信(商标使用许可备案受理通知书)               1\n",
+       "领退信(连续三年不使用撤销申请的结案通知)            1\n",
+       "排版送达公告(初步审定公告通知书)                1\n",
+       "领退信(关于撤销连续三年未使用商标的决定)            1\n",
+       "驳回复审排版送达公告(商标注册证)                1\n",
+       "排版送达公告(商标异议申请不予受理通知书)            1\n",
+       "有退信(商标转让证明)                      1\n",
+       "领退信(异议决定书)                       1\n",
+       "驳回复审待审中                          1\n",
+       "打印受理通知                           1\n",
+       "有退信(关于提供注册商标使用证据的通知)             1\n",
+       "排版送达公告(商标转让证明)                   1\n",
+       "异议不予受理                           1\n",
+       "有退信(关于商标继续有效的决定)                 1\n",
+       "等待补充证据发文                         1\n",
+       "商标使用许可合同变更中                      1\n",
+       "撤销注册商标复审评审形审不予受理通知发文             1\n",
+       "商标注册证                            1\n",
+       "有退信(国际注册翻译收费通知单)                 1\n",
+       "有退信(商标注册证)                       1\n",
+       "补发注册证不予受理                        1\n",
+       "撤销注册商标复审完成                       1\n",
+       "排版未续展注销公告                        1\n",
+       "删减商品/服务项目申请完成                    1\n",
+       "撤销注册商标复审有退信(商标撤销复审答辩通知书)         1\n",
+       "领退信(撤销连续三年不使用注册商标申请补正通知书)        1\n",
+       "领退信(商标注册证商品服务附页)                 1\n",
+       "驳回复审有退信(商标评审申请受理通知书)             1\n",
+       "Name: 商标状态, Length: 208, dtype: int64"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_shangbiao_withdate = df_shangbiao.loc[(df_shangbiao['专用权期限结束日期'].notnull())]\n",
+    "df_shangbiao_withdate['专用权期限结束日期'] = pd.to_datetime(\n",
+    "    df_shangbiao_withdate['专用权期限结束日期'])\n",
+    "df_shangbiao_withdate = df_shangbiao_withdate.loc[(\n",
+    "    df_shangbiao_withdate['专用权期限结束日期']) > current_date]\n",
+    "df_shangbiao_withdate['商标状态'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 98,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:48.388174Z",
+     "start_time": "2019-03-22T17:26:48.330749Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# finished = ['商标已注册',\n",
+    "#             '注册',\n",
+    "#             '商标注册申请完成',\n",
+    "#             '商标续展完成',\n",
+    "#             '商标变更完成',\n",
+    "#             '变更商标申请人/注册人名义/地址完成',\n",
+    "#             '商标注册申请注册公告排版完成',\n",
+    "#             '商标无效',\n",
+    "#             '商标转让完成',\n",
+    "#             '出具商标注册证明完成']\n",
+    "# new_df_shangbiao.loc[(new_df_shangbiao['商标状态'].str.contains('[商标已注册|注册|商标注册申请完成|商标续展完成|商标变更完成|变更商标申请人/注册人名义/地址完成|商标注册申请注册公告排版完成|商标转让完成|出具商标注册证明完成]'))]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 海关进出口信用"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 99,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:48.778346Z",
+     "start_time": "2019-03-22T17:26:48.392476Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_haiguan_bkp = pd.read_excel(r'../../Data/CompInfo/海关进出口信用.xlsx')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 100,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:48.785052Z",
+     "start_time": "2019-03-22T17:26:48.780696Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_haiguan = df_haiguan_bkp.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 101,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:48.870292Z",
+     "start_time": "2019-03-22T17:26:48.787718Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 2609 entries, 0 to 2608\n",
+      "Data columns (total 6 columns):\n",
+      "企业编号      2609 non-null int64\n",
+      "经济区划      2608 non-null object\n",
+      "经营类别      2607 non-null object\n",
+      "海关注销标志    1774 non-null object\n",
+      "年报情况      2609 non-null object\n",
+      "信用等级      1355 non-null object\n",
+      "dtypes: int64(1), object(5)\n",
+      "memory usage: 122.4+ KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_haiguan.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 102,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:48.917991Z",
+     "start_time": "2019-03-22T17:26:48.873471Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "进出口收发货人       2571\n",
+       "加工生产企业          20\n",
+       "报关企业             6\n",
+       "保税仓库             5\n",
+       "临时注册企业           3\n",
+       "0000000001       1\n",
+       "进出口运输工具负责人       1\n",
+       "Name: 经营类别, dtype: int64"
+      ]
+     },
+     "execution_count": 102,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_haiguan['经营类别'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 103,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:26:48.985240Z",
+     "start_time": "2019-03-22T17:26:48.920228Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "一般信用企业    913\n",
+       "一般认证企业    318\n",
+       "高级认证企业    123\n",
+       "失信企业        1\n",
+       "Name: 信用等级, dtype: int64"
+      ]
+     },
+     "execution_count": 103,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_haiguan['信用等级'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 招投标"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 104,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:27:04.837621Z",
+     "start_time": "2019-03-22T17:26:48.987143Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_zhaotoubiao_bkp = pd.read_excel(r'../../Data/CompInfo/招投标.xlsx')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 105,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:27:04.856671Z",
+     "start_time": "2019-03-22T17:27:04.840284Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df_zhaotoubiao = df_zhaotoubiao_bkp.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 106,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:27:05.235417Z",
+     "start_time": "2019-03-22T17:27:04.859049Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 158309 entries, 0 to 158308\n",
+      "Data columns (total 5 columns):\n",
+      "企业编号     158309 non-null int64\n",
+      "公告类型     146194 non-null object\n",
+      "中标或招标    158309 non-null object\n",
+      "省份       158309 non-null object\n",
+      "发布时间     158309 non-null object\n",
+      "dtypes: int64(1), object(4)\n",
+      "memory usage: 6.0+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_zhaotoubiao.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 107,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:27:05.268879Z",
+     "start_time": "2019-03-22T17:27:05.238410Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "中标    139286\n",
+       "招标     19023\n",
+       "Name: 中标或招标, dtype: int64"
+      ]
+     },
+     "execution_count": 107,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_zhaotoubiao['中标或招标'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 108,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:27:05.357403Z",
+     "start_time": "2019-03-22T17:27:05.271805Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "中标       110781\n",
+       "成交        17653\n",
+       "合同        11509\n",
+       "预告         2777\n",
+       "其它         1233\n",
+       "招标          984\n",
+       "废标          559\n",
+       "单一          210\n",
+       "流标          188\n",
+       "变更          145\n",
+       "询价           85\n",
+       "竞谈           23\n",
+       "拟建           18\n",
+       "验收           15\n",
+       "结果变更          8\n",
+       "公开招标          2\n",
+       "违规            1\n",
+       "其他            1\n",
+       "竞争性谈判         1\n",
+       "竞价            1\n",
+       "Name: 公告类型, dtype: int64"
+      ]
+     },
+     "execution_count": 108,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_zhaotoubiao['公告类型'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 113,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:31:19.903843Z",
+     "start_time": "2019-03-22T17:31:19.866050Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "new_df_zhaotoubiao = df_zhaotoubiao.groupby(\n",
+    "    ['企业编号', '中标或招标'])['中标或招标'].count().unstack()\n",
+    "\n",
+    "\n",
+    "new_df_zhaotoubiao['企业编号'] = new_df_zhaotoubiao.index\n",
+    "# new_df_zhaotoubiao.sort_values(by=['企业编号'], inplace=True)\n",
+    "new_df_zhaotoubiao = new_df_zhaotoubiao[['企业编号', '中标', '招标']]\n",
+    "new_df_zhaotoubiao = new_df_zhaotoubiao.set_index(\n",
+    "    np.arange(0, len(new_df_zhaotoubiao)))\n",
+    "# new_df_zhaotoubiao.head(n=20)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 114,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:31:22.263909Z",
+     "start_time": "2019-03-22T17:31:22.246633Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "merge_zhaotuobiao = (pd.merge(merge_zhuzuo_zuopin_project_nashui_zizhi_product_zhuanli_jingpin, new_df_zhaotoubiao,\n",
+    "                              on='企业编号', how='outer')).fillna(0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 115,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-22T17:31:44.853280Z",
+     "start_time": "2019-03-22T17:31:44.814990Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>企业编号</th>\n",
+       "      <th>软著数量</th>\n",
+       "      <th>作品著作数量</th>\n",
+       "      <th>项目数量</th>\n",
+       "      <th>纳税A级年份_2014</th>\n",
+       "      <th>纳税A级年份_2015</th>\n",
+       "      <th>纳税A级年份_2016</th>\n",
+       "      <th>纳税A级年份_2017</th>\n",
+       "      <th>资质证书数量</th>\n",
+       "      <th>android</th>\n",
+       "      <th>...</th>\n",
+       "      <th>wechat</th>\n",
+       "      <th>weibo</th>\n",
+       "      <th>发明专利</th>\n",
+       "      <th>发明公布</th>\n",
+       "      <th>发明授权</th>\n",
+       "      <th>外观设计</th>\n",
+       "      <th>实用新型</th>\n",
+       "      <th>竞品数量</th>\n",
+       "      <th>中标</th>\n",
+       "      <th>招标</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1001</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>9.0</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>12.0</td>\n",
+       "      <td>74.0</td>\n",
+       "      <td>38.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1002</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>8.0</td>\n",
+       "      <td>318.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1003</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>442.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>141.0</td>\n",
+       "      <td>61.0</td>\n",
+       "      <td>469.0</td>\n",
+       "      <td>956.0</td>\n",
+       "      <td>17.0</td>\n",
+       "      <td>17.0</td>\n",
+       "      <td>8.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1005</td>\n",
+       "      <td>6.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>6.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>6.0</td>\n",
+       "      <td>19.0</td>\n",
+       "      <td>46.0</td>\n",
+       "      <td>5.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1006</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>6.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>12.0</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>8.0</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>39.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>5 rows × 23 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   企业编号  软著数量  作品著作数量  项目数量  纳税A级年份_2014  纳税A级年份_2015  纳税A级年份_2016  \\\n",
+       "0  1001   1.0     1.0   1.0          1.0          2.0          1.0   \n",
+       "1  1002   2.0     0.0   1.0          1.0          1.0          2.0   \n",
+       "2  1003   2.0     0.0   1.0          1.0          1.0          0.0   \n",
+       "3  1005   6.0     0.0   1.0          0.0          0.0          0.0   \n",
+       "4  1006   2.0     1.0   1.0          1.0          1.0          1.0   \n",
+       "\n",
+       "   纳税A级年份_2017  资质证书数量  android  ...  wechat  weibo  发明专利   发明公布  发明授权   外观设计  \\\n",
+       "0          1.0     9.0      4.0  ...     0.0    0.0   0.0    4.0   0.0    0.0   \n",
+       "1          0.0     0.0      1.0  ...     1.0    1.0   0.0    1.0   0.0    0.0   \n",
+       "2          1.0   442.0      0.0  ...     1.0    1.0   0.0  141.0  61.0  469.0   \n",
+       "3          0.0     5.0      0.0  ...     0.0    0.0   0.0    6.0   2.0    0.0   \n",
+       "4          0.0     6.0      1.0  ...     0.0    0.0   0.0   12.0   5.0    2.0   \n",
+       "\n",
+       "    实用新型  竞品数量    中标     招标  \n",
+       "0    0.0  12.0  74.0   38.0  \n",
+       "1    1.0   1.0   8.0  318.0  \n",
+       "2  956.0  17.0  17.0    8.0  \n",
+       "3    6.0  19.0  46.0    5.0  \n",
+       "4    8.0   3.0   0.0   39.0  \n",
+       "\n",
+       "[5 rows x 23 columns]"
+      ]
+     },
+     "execution_count": 115,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "merge_zhaotuobiao.head(n=5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 138,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2019-03-23T01:51:56.449688Z",
+     "start_time": "2019-03-23T01:51:55.041438Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "merge_zhaotuobiao.to_excel(\n",
+    "    r'./PreprocessedData/软著_作品_项目_纳税A_资质_产品_专利_竞品_招投标.xlsx', index=False)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.8"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": true,
+   "sideBar": true,
+   "skip_h1_title": false,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": false
+  },
+  "varInspector": {
+   "cols": {
+    "lenName": 16,
+    "lenType": 16,
+    "lenVar": 40
+   },
+   "kernels_config": {
+    "python": {
+     "delete_cmd_postfix": "",
+     "delete_cmd_prefix": "del ",
+     "library": "var_list.py",
+     "varRefreshCmd": "print(var_dic_list())"
+    },
+    "r": {
+     "delete_cmd_postfix": ") ",
+     "delete_cmd_prefix": "rm(",
+     "library": "var_list.r",
+     "varRefreshCmd": "cat(var_dic_list()) "
+    }
+   },
+   "types_to_exclude": [
+    "module",
+    "function",
+    "builtin_function_or_method",
+    "instance",
+    "_Feature"
+   ],
+   "window_display": false
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
