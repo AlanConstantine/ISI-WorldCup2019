@@ -8,5 +8,5 @@
 
 ## 比赛结果：
 * RMSE:3.856
-* RANKING: 25/308
+* Rank: 25/308
 * [Leaderboard](http://www.linkx.ac.cn/#/ranking)
