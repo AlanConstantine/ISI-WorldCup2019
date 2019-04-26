@@ -4,7 +4,7 @@
 最终提交请看Submit文件夹
 
 ## 比赛链接
-[](http://www.linkx.ac.cn/#/title)
+[IEEE ISI-World Cup 2019](http://www.linkx.ac.cn/#/title)
 
 ## 比赛结果：
 * RMSE:3.856
