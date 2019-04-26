@@ -7,6 +7,6 @@
 [IEEE ISI-World Cup 2019](http://www.linkx.ac.cn/#/title)
 
 ## 比赛结果：
-* RMSE:3.856
+* RMSE: 3.856
 * Rank: 25/308
 * [Leaderboard](http://www.linkx.ac.cn/#/ranking)
